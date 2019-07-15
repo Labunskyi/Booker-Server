@@ -32,9 +32,10 @@ class Events
 
     }
 	
-	public function getEvents(){
+	public function getEvents($params){
+		$idroom = $params[0];
 		$sqlQuery = "SELECT `id`, `is_recurring`, `idrec`, `description`, `start_time`,
-		`end_time`, `date`, `idroom`, `iduser` FROM `booker_events`";
+		`end_time`, `date`, `idroom`, `iduser` FROM `booker_events` where `idroom` = '$idroom'";
 		$result = $this->conn->query($sqlQuery) ;
        
         $resultArray = array ();
