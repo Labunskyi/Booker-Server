@@ -1,3 +1,7 @@
+<Limit GET POST PUT DELETE>
+    Allow from all
+</Limit>
+
 RewriteEngine On
 RewriteBase /Server/api/carshop/
 RewriteCond %{REQUEST_FILENAME} !-f

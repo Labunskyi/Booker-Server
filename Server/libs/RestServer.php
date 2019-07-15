@@ -23,6 +23,10 @@ class RestServer
         $method = $_SERVER['REQUEST_METHOD'];
         $funcParams = explode('/', $path);
         $result = '';
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Headers: *');
+		header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS, PUT');
+        header('Content-Type: application/json');
         switch ($method) {
             case 'GET':
                 $result = $this->setMethod('get' . $methodName, $funcParams);
@@ -54,10 +58,7 @@ class RestServer
     }
 	public function show_results($result)
 	{
-        header('Access-Control-Allow-Origin: *');
-		header('Access-Control-Allow-Headers: *');
-		header('Access-Control-Allow-Methods: GET, POST, PUT');
-        header('Content-Type: application/json');
+
         echo json_encode($result);
                
     }
