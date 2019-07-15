@@ -46,6 +46,23 @@ class Events
 			}	
 	}
 	
+	public function getEventById($params){
+		$id = $params[0];
+		$sqlQuery = "SELECT * FROM `booker_events` where `id` = '$id'";
+		$result = $this->conn->query($sqlQuery);    
+        
+		$resultArray = array ();
+		while ($row = $result->fetchAll(PDO::FETCH_OBJ) ) {
+			$resultArray[] = $row;
+		}
+
+		$resultArr = array ();
+		foreach ($resultArray as $resultArr) {
+			return $resultArr;
+		}
+
+	}
+	
 	public function postOrderList()
     {
 		$userid = $_POST['userid'];
