@@ -91,27 +91,6 @@ class Events
 		
 	}
 	
-	public function postToken()
-	{	
-		if (isset($_POST['token'])) {
-		$token = $_POST['token'];
-		$sqlQuery = "SELECT UserId, username, password, token FROM `users` WHERE token = '$token'";
-        $result = $this->conn->query($sqlQuery);
-		
-		$resultArray = array ();
-			while ($row = $result->fetchAll(PDO::FETCH_ASSOC) ) {
-				$resultArray[] = $row;
-			}
-		$tokenComperative = $resultArray[0][0]['token'];
-		$userid = $resultArray[0][0]['UserId'];
-        if($token === $tokenComperative) {
-            return ['token' => $token, 'userid' => $userid ];
-        }
-        return false;
-		}
-		
-	}
-	
 }
 $events = new Events();
 $server = new RestServer($events);
