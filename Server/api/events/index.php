@@ -50,8 +50,11 @@ class Events
 	
 	public function getEventById($params){
 		$id = $params[0];
-		$sqlQuery = "SELECT `id`, `is_recurring`, `idrec`, `description`, `start_time`,
-		`end_time`, `date`, `idroom`, `iduser` FROM `booker_events` where `id` = '$id'";
+		$sqlQuery = "SELECT booker_events.id, booker_events.is_recurring, booker_events.idrec, 
+		booker_events.description, booker_events.start_time, booker_events.end_time, booker_events.date, 
+		booker_events.created_time, booker_events.idroom, booker_events.iduser, booker_users.username 
+		FROM booker_events INNER JOIN booker_users ON booker_events.iduser = booker_users.id 
+		WHERE booker_events.id = '$id';";
 		$result = $this->conn->query($sqlQuery);    
         
 		$resultArray = array ();
