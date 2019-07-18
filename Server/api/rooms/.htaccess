@@ -3,7 +3,7 @@
 </Limit>
 
 RewriteEngine On
-RewriteBase /Server/api/carshop/
+RewriteBase /Server/api/rooms/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^.*$ index.php

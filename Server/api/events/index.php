@@ -15,7 +15,7 @@ class Events
     {
 		
 		$is_recurring = $_POST['is_recurring'];
-        $idrec = $_POST['idrec'];
+        
 		$description = $_POST['description'];
         $start_time = $_POST['start_time'];
 		$end_time = $_POST['end_time'];
