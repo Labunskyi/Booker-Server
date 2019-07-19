@@ -35,8 +35,7 @@ CREATE TABLE `booker_events` (
   `description` varchar(200) NOT NULL,
   `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `date` varchar(100) NOT NULL,
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
   `idroom` int(12) NOT NULL,
   `iduser` int(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -45,16 +44,6 @@ CREATE TABLE `booker_events` (
 -- Дамп данных таблицы `booker_events`
 --
 
-INSERT INTO `booker_events` (`id`, `is_recurring`, `idrec`, `description`, `start_time`, `end_time`, `created_time`, `date`, `idroom`, `iduser`) VALUES
-(80, 0, 0, 'r', '2019-07-12 05:00:00', '2019-07-12 05:00:00', '2019-07-17 18:23:35', '2019-07-12', 2, 1),
-(114, 0, 0, 'sdsd', '2019-07-17 05:00:00', '2019-07-17 05:30:00', '2019-07-17 07:44:23', '2019-07-17', 1, 2),
-(121, 1, 0, '', '2019-07-18 05:00:00', '2019-07-18 06:00:00', '2019-07-18 09:20:43', '2019-07-18', 1, 1),
-(122, 1, 0, '', '2019-07-18 05:00:00', '2019-07-18 06:00:00', '2019-07-18 09:45:38', '2019-07-18', 1, 1),
-(123, 1, 0, '', '2019-07-18 05:00:00', '2019-07-18 06:00:00', '2019-07-18 09:46:33', '2019-07-18', 1, 1),
-(124, 1, 0, '', '2019-07-18 05:00:00', '2019-07-18 05:30:00', '2019-07-18 09:52:42', '2019-07-18', 1, 1),
-(125, 1, 0, 'e', '2019-07-18 05:00:00', '2019-07-18 05:30:00', '2019-07-18 09:54:51', '2019-07-18', 1, 1),
-(126, 0, 0, '', '2019-07-19 05:00:00', '2019-07-19 05:30:00', '2019-07-18 10:22:21', '2019-07-19', 1, 1),
-(127, 1, 0, '', '2019-07-19 05:00:00', '2019-07-19 05:30:00', '2019-07-18 10:23:00', '2019-07-19', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -97,11 +86,8 @@ CREATE TABLE `booker_users` (
 --
 
 INSERT INTO `booker_users` (`id`, `username`, `password`, `email`, `token`, `is_admin`, `is_active`) VALUES
-(1, 'admin', '123', 'admin@localhost', '46d229b033af06a191ff2267bca9ae56', 1, 1),
-(2, 'user1', '1', 'user1@local.ru', 'c099f4d05d6e54997a75d999f977782b', 0, 1),
-(3, 'k', 'l', '.', NULL, 0, 0),
-(4, 'we', 'we', 'we', NULL, 0, 0),
-(5, 'hgoui', 'iuhiu', 'iuhiu', NULL, 0, 0);
+(1, 'admin', '123', 'admin@local.com', '', 1, 1),
+(2, 'user1', '123', 'user1@local.com', '', 0, 1);
 
 --
 -- Индексы сохранённых таблиц
