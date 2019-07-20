@@ -56,49 +56,40 @@ class Events
 	}	
 	
 	
-	private function createRecDates($start_time, $end_time, $period, $duration)
+	function createRecDates($start_time, $end_time, $period, $duration) 
     {
         $dates = [[$start_time, $end_time]];
-        $n = +$duration;
-        $periods = ['weekly' =>['week',1], 'bi-weekly' => ['week',2], 'monthly' => ['week',4]];
-        $limits = ['weekly' =>['week',4], 'bi-weekly' => ['week',3], 'monthly' => ['week',1]];
-
-        $timeMeasure = $periods[$period][0];
-        if ($n > $limits[$period][1])
+        $periods = ['weekly' =>[1], 'bi-weekly' => [2], 'monthly' => [4]];
+        $limits = ['weekly' =>[4], 'bi-weekly' => [4], 'monthly' => [4]];
+        if ($duration > $limits[$period][0])
         {
-            http_response_code(400);
-            throw new Exception('Date limit exceeded');
+            throw new Exception('Duration limit exceeded');
         }
-
-        $nPeriods = $periods[$period][1];
-        for ($i = 0; $i < $n; $i++)
+        $nPeriods = $periods[$period][0];
+        for ($i = 0; $i < $duration; $i++)
         {
-            $start = strtotime($start_time . ' +' . $nPeriods * ($i + 1) . ' '. $timeMeasure);
-            $end = strtotime($end_time . ' +' . $nPeriods * ($i + 1) . ' '. $timeMeasure);
+            $start = strtotime($start_time . ' +' . $nPeriods * ($i + 1) . ' '. 'week');
+            $end = strtotime($end_time . ' +' . $nPeriods * ($i + 1) . ' '. 'week');
             $dates[] = [date('Y-m-d H:i', $start), date('Y-m-d H:i', $end)];
         }
         return $dates;
     }
 	
 	
-	private function isFreeRange($idroom, $start_time, $end_time, $current_id=false)
+	private function isFreeRange($idroom, $start_time, $end_time)
     {
-        $sqlQuery = 'SELECT id, start_time, end_time, idroom, iduser FROM booker_events';
-        $sqlQuery .= ' WHERE idroom=' . $idroom;
-        $sqlQuery .= " AND (((start_time >= '$start_time') AND (end_time <= '$end_time'))"
-                    ." OR ((start_time >= '$start_time') AND (start_time <= '$end_time'))"
-                    ." OR ((end_time >='$start_time') AND (end_time <= '$end_time')))";
-        if ($current_id)
-        {
-            $sqlQuery .= " AND id<>$current_id";
-        }
-		
+        $sqlQuery = 'SELECT `id`, `start_time`, `end_time`, `idroom`, `iduser` FROM `booker_events`';
+        $sqlQuery .= ' WHERE `idroom` =' . $idroom;
+        $sqlQuery .= " AND (((`start_time` >= '$start_time') AND (`end_time` <= '$end_time'))"
+                    ." OR ((`start_time` >= '$start_time') AND (`start_time` <= '$end_time'))"
+                    ." OR ((`end_time` > '$start_time') AND (`end_time` <= '$end_time')))";
+       
 		$result = $this->conn->query($sqlQuery) ;
         $events = $result->fetchAll(PDO::FETCH_ASSOC);
         if (count($events)>0)
         {
-            http_response_code(403);
-            throw new Exception("The time range is bisy!");
+            
+            throw new Exception("This time is already booked!");
         }
         return true;
     }
@@ -168,9 +159,11 @@ class Events
 		$description = $data['description'];
 		$start_time = $data['start_time'];
 		$end_time = $data['end_time'];
-				
+		$idroom = $data['idroom'];
+		
+		$this->isFreeRange($idroom, $start_time, $end_time);		
 		$sqlQuery = "UPDATE `booker_events` SET `description` = '$description', 
-		`start_time` = '$start_time', `end_time` = '$end_time' WHERE id = '$id'";
+		`start_time` = '$start_time', `end_time` = '$end_time' WHERE `id` = '$id'";
 		$result = $this->conn->query($sqlQuery);
 		
 		return $result;

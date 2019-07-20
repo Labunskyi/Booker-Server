@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Время создания: Июл 18 2019 г., 16:42
+-- Время создания: Июл 20 2019 г., 23:27
 -- Версия сервера: 10.1.37-MariaDB
 -- Версия PHP: 7.3.0
 
@@ -30,12 +30,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `booker_events` (
   `id` int(12) NOT NULL,
-  `is_recurring` tinyint(1) DEFAULT NULL,
+  `is_recurring` tinyint(1) NOT NULL,
   `idrec` int(12) DEFAULT NULL,
   `description` varchar(200) NOT NULL,
   `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `idroom` int(12) NOT NULL,
   `iduser` int(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -44,6 +44,11 @@ CREATE TABLE `booker_events` (
 -- Дамп данных таблицы `booker_events`
 --
 
+INSERT INTO `booker_events` (`id`, `is_recurring`, `idrec`, `description`, `start_time`, `end_time`, `created_time`, `idroom`, `iduser`) VALUES
+(51, 0, 1563652430, 'a', '2019-07-23 05:00:00', '2019-07-23 06:00:00', '2019-07-20 19:53:50', 1, 1),
+(52, 0, 1563652441, 'aa', '2019-07-23 06:00:00', '2019-07-23 07:00:00', '2019-07-20 19:54:01', 1, 1),
+(53, 1, 1563653451, 'q', '2019-07-29 05:00:00', '2019-07-29 06:00:00', '2019-07-20 20:10:51', 1, 1),
+(54, 1, 1563653451, 'q', '2019-08-05 05:00:00', '2019-08-05 06:00:00', '2019-07-20 20:10:51', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -86,8 +91,12 @@ CREATE TABLE `booker_users` (
 --
 
 INSERT INTO `booker_users` (`id`, `username`, `password`, `email`, `token`, `is_admin`, `is_active`) VALUES
-(1, 'admin', '123', 'admin@local.com', '', 1, 1),
-(2, 'user1', '123', 'user1@local.com', '', 0, 1);
+(1, 'admin', '123', 'admin@localhost', '46d229b033af06a191ff2267bca9ae56', 1, 1),
+(2, 'user1', '123', 'user1@local.ru', 'c099f4d05d6e54997a75d999f977782b', 0, 1),
+(3, 'k', 'l', '.', NULL, 0, 0),
+(4, 'we', 'we', 'we', NULL, 0, 0),
+(5, 'hgoui', 'iuhiu', 'iuhiu', NULL, 0, 0),
+(6, 'wqr', 'qe', 'qr', NULL, 0, 0);
 
 --
 -- Индексы сохранённых таблиц
@@ -121,7 +130,7 @@ ALTER TABLE `booker_users`
 -- AUTO_INCREMENT для таблицы `booker_events`
 --
 ALTER TABLE `booker_events`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT для таблицы `booker_rooms`
@@ -133,7 +142,7 @@ ALTER TABLE `booker_rooms`
 -- AUTO_INCREMENT для таблицы `booker_users`
 --
 ALTER TABLE `booker_users`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
