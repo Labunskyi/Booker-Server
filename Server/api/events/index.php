@@ -1,7 +1,6 @@
 <?php
 include_once "../../libs/RestServer.php";
 include_once "../../config.php";
-
 class Events
 {
 	
@@ -24,7 +23,6 @@ class Events
 		
 		if ($is_recurring)
         {
-
             $period = $_POST['period'];
             $duration_recurring = $_POST['duration_recurring'];
         }
@@ -96,7 +94,6 @@ class Events
         }
         return true;
     }
-
 	private function insertSingleEvent($is_recurring, $idrec, $description, $start_time, $end_time, $idroom, $iduser)
     {
 	   $sqlQuery = "INSERT INTO `booker_events` (`is_recurring`, `idrec`, `description`, `start_time`,
@@ -105,7 +102,6 @@ class Events
 		$result = $this->conn->query($sqlQuery) ;
        
         return $result;
-
     }
 	
 	
@@ -114,7 +110,8 @@ class Events
         return strtotime('now');
     }
 	
-	public function getEvents($params){
+	public function getEvents($params)
+	{
 		$idroom = $params[0];
 		$sqlQuery = "SELECT `id`, `is_recurring`, `idrec`, `description`, `start_time`,
 		`end_time`, `idroom`, `iduser` FROM `booker_events` where `idroom` = '$idroom'";
@@ -143,15 +140,14 @@ class Events
 		while ($row = $result->fetchAll(PDO::FETCH_OBJ) ) {
 			$resultArray[] = $row;
 		}
-
 		$resultArr = array ();
 		foreach ($resultArray as $resultArr) {
 			return $resultArr;
 		}
-
 	}
 	
-	public function putEventEdit($request){
+	public function putEventEdit($request)
+	{
 		
 		$request = file_get_contents('php://input');
 		$data = (array) json_decode($request);
@@ -175,9 +171,12 @@ class Events
                 $start = $this->changeTime($event['start_time'], $start_time);
                 $end = $this->changeTime($event['end_time'], $end_time);
 				$this->isFreeRange($idroom, $start, $end, $id);
-				$sqlQuery = "UPDATE `booker_events` SET `is_recurring` = '$is_recurring', `description` = '$description', 
-				`start_time` = '$start', `end_time` = '$end', `iduser` = '$iduser' WHERE `id` = '$id'";
-				$result = $this->conn->query($sqlQuery);
+				if (strtotime($start)>=strtotime($start_time)) 
+				{
+					$sqlQuery = "UPDATE `booker_events` SET `is_recurring` = '$is_recurring', `description` = '$description', 
+					`start_time` = '$start', `end_time` = '$end', `iduser` = '$iduser' WHERE `id` = '$id'";
+					$result = $this->conn->query($sqlQuery);
+				}
             }
         }
         else
@@ -206,11 +205,37 @@ class Events
         return date('Y-m-d H:i',$resDate);
     }
 	
-	public function deleteEvent($params){
+	public function postDeleteEvent($params){
 		$id = $params[0];
-		$sqlQuery = "DELETE FROM `booker_events` WHERE `id` = '$id'";
-        $result = $this->conn->query($sqlQuery);
-		return $result;
+		date_default_timezone_set('UTC');
+		$start_time = $_POST['start_time'];
+		$is_recurring = ($_POST['is_recurring'] == '1') ? 1 : 0;
+		$applyToAllRec = ($_POST['applyToAllRec'] == 'true') ? 1 : 0;
+		$idrec = $_POST['idrec'];
+		
+        if ($is_recurring && $applyToAllRec)
+        {
+            $rec_events = $this->getRecEvents($idrec);
+            foreach ($rec_events as $event)
+            {
+                $id = $event['id'];
+                $start = $this->changeTime($event['start_time'], $start_time);
+                if (strtotime($start)>=strtotime($start_time))
+                {
+                    $sqlQuery = "DELETE FROM `booker_events` WHERE `id` = '$id'";
+					$result = $this->conn->query($sqlQuery);
+					
+                }
+            }
+        }else
+        {
+            $sqlQuery = "DELETE FROM `booker_events` WHERE `id` = '$id'";
+			$result = $this->conn->query($sqlQuery);
+			return $result;
+        }
+       
+        return false;
+		
 		
 	}
 	
