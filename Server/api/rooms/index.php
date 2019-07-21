@@ -1,6 +1,6 @@
 <?php
 include_once "../../libs/RestServer.php";
-include_once "../../config.php";
+include_once "../../libs/SQL.php";
 
 class Rooms
 {
@@ -8,7 +8,7 @@ class Rooms
 	function __construct()
     {
         
-		$this->conn = new PDO("mysql:host=".HOST.";dbname=".DB_NAME.";charset=utf8", USER, PASSWORD);
+		$this->sql = new SQL();
            
     }
 	

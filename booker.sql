@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Время создания: Июл 21 2019 г., 21:17
+-- Время создания: Июл 22 2019 г., 01:26
 -- Версия сервера: 10.1.37-MariaDB
 -- Версия PHP: 7.3.0
 
@@ -39,17 +39,6 @@ CREATE TABLE `booker_events` (
   `idroom` int(12) NOT NULL,
   `iduser` int(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Дамп данных таблицы `booker_events`
---
-
-INSERT INTO `booker_events` (`id`, `is_recurring`, `idrec`, `description`, `start_time`, `end_time`, `created_time`, `idroom`, `iduser`) VALUES
-(134, 1, 1563735452, 'wewewess', '2019-07-29 05:00:00', '2019-07-29 06:00:00', '2019-07-21 18:57:32', 1, 1),
-(135, 1, 1563735452, 'wewewess', '2019-08-05 05:00:00', '2019-08-05 06:00:00', '2019-07-21 18:57:32', 1, 1),
-(136, 0, 0, 'weweaas', '2019-07-22 06:30:00', '2019-07-22 07:00:00', '2019-07-21 18:59:26', 1, 1),
-(137, 0, 0, 'd', '2019-07-22 07:00:00', '2019-07-22 08:00:00', '2019-07-21 19:04:11', 1, 1),
-(138, 0, 0, 'ree', '2019-07-29 06:00:00', '2019-07-29 07:00:00', '2019-07-21 19:12:36', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -127,7 +116,7 @@ ALTER TABLE `booker_users`
 -- AUTO_INCREMENT для таблицы `booker_events`
 --
 ALTER TABLE `booker_events`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=201;
 
 --
 -- AUTO_INCREMENT для таблицы `booker_rooms`
@@ -139,7 +128,7 @@ ALTER TABLE `booker_rooms`
 -- AUTO_INCREMENT для таблицы `booker_users`
 --
 ALTER TABLE `booker_users`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

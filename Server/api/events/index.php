@@ -1,15 +1,20 @@
 <?php
 include_once "../../libs/RestServer.php";
-include_once "../../config.php";
+include_once "../../libs/SQL.php";
+
+
 class Events
 {
 	
 	function __construct()
     {
         
-		$this->conn = new PDO("mysql:host=".HOST.";dbname=".DB_NAME.";charset=utf8", USER, PASSWORD);
+		$this->sql = new SQL();
            
     }
+	
+	// create single event
+	
 	public function postSingleEvent()
     {
 		
@@ -53,6 +58,7 @@ class Events
         return false;
 	}	
 	
+	// create an array with reccuring events
 	
 	public function createRecDates($start_time, $end_time, $period, $duration) 
     {
@@ -73,6 +79,7 @@ class Events
         return $dates;
     }
 	
+	//check if the time has already booked
 	
 	private function isFreeRange($idroom, $start_time, $end_time, $current_id = false)
     {
@@ -85,37 +92,43 @@ class Events
         {
             $sqlQuery .= " AND `id` <> '$current_id'";
         }
-		$result = $this->conn->query($sqlQuery) ;
+		$result = $this->sql->conn->query($sqlQuery);
         $events = $result->fetchAll(PDO::FETCH_ASSOC);
         if (count($events)>0)
         {
             
-            throw new Exception("This time is already booked!");
+            throw new Exception("This time has already booked!");
         }
         return true;
     }
+	
+	// make single event
+	
 	private function insertSingleEvent($is_recurring, $idrec, $description, $start_time, $end_time, $idroom, $iduser)
     {
 	   $sqlQuery = "INSERT INTO `booker_events` (`is_recurring`, `idrec`, `description`, `start_time`,
 		`end_time`, `idroom`, `iduser`) VALUES ('$is_recurring', '$idrec','$description', '$start_time',
 		'$end_time', '$idroom', '$iduser')";
-		$result = $this->conn->query($sqlQuery) ;
+		$result = $this->sql->conn->query($sqlQuery);
        
         return $result;
     }
 	
+	// get unix timestamp
 	
 	private function getNewIdRec()
     {
         return strtotime('now');
     }
 	
+	// get all events
+	
 	public function getEvents($params)
 	{
 		$idroom = $params[0];
 		$sqlQuery = "SELECT `id`, `is_recurring`, `idrec`, `description`, `start_time`,
 		`end_time`, `idroom`, `iduser` FROM `booker_events` where `idroom` = '$idroom'";
-		$result = $this->conn->query($sqlQuery) ;
+		$result = $this->sql->conn->query($sqlQuery) ;
        
         $resultArray = array ();
 			while ($row = $result->fetchAll(PDO::FETCH_OBJ) ) {
@@ -127,14 +140,17 @@ class Events
 			}	
 	}
 	
-	public function getEventById($params){
+	// get a single event by id
+	
+	public function getEventById($params)
+	{
 		$id = $params[0];
 		$sqlQuery = "SELECT booker_events.id, booker_events.is_recurring, booker_events.idrec, 
 		booker_events.description, booker_events.start_time, booker_events.end_time,  
 		booker_events.created_time, booker_events.idroom, booker_events.iduser, booker_users.username 
 		FROM booker_events INNER JOIN booker_users ON booker_events.iduser = booker_users.id 
 		WHERE booker_events.id = '$id';";
-		$result = $this->conn->query($sqlQuery);    
+		$result = $this->sql->conn->query($sqlQuery);    
         
 		$resultArray = array ();
 		while ($row = $result->fetchAll(PDO::FETCH_OBJ) ) {
@@ -145,6 +161,8 @@ class Events
 			return $resultArr;
 		}
 	}
+	
+	// edit an event or reccuring events
 	
 	public function putEventEdit($request)
 	{
@@ -175,7 +193,7 @@ class Events
 				{
 					$sqlQuery = "UPDATE `booker_events` SET `is_recurring` = '$is_recurring', `description` = '$description', 
 					`start_time` = '$start', `end_time` = '$end', `iduser` = '$iduser' WHERE `id` = '$id'";
-					$result = $this->conn->query($sqlQuery);
+					$result = $this->sql->conn->query($sqlQuery);
 				}
             }
         }
@@ -184,18 +202,22 @@ class Events
 			$this->isFreeRange($idroom, $start_time, $end_time, $id);
 			$sqlQuery = "UPDATE `booker_events` SET `is_recurring` = '$is_recurring', `description` = '$description', 
 			`start_time` = '$start_time', `end_time` = '$end_time', `iduser` = '$iduser' WHERE `id` = '$id'";
-			$result = $this->conn->query($sqlQuery);
+			$result = $this->sql->conn->query($sqlQuery);
         }
 		return $result;
 	}
+	
+	// get reccuring events
 	
 	public function getRecEvents($idrec)
     {	
         $sqlQuery = "SELECT `id`, `is_recurring`, `idrec`, `description`, `start_time`, `end_time`, `created_time`,
      	`idroom`, `iduser` FROM `booker_events` WHERE `idrec` = '$idrec'";
-        $result = $this->conn->query($sqlQuery);
+        $result = $this->sql->conn->query($sqlQuery);
         return $result->fetchAll(PDO::FETCH_ASSOC);
     }
+	
+	// chang time in reccuring events
 	
 	private function changeTime($srcDate, $srcTime)
     {
@@ -204,6 +226,8 @@ class Events
         $resDate = strtotime(date('Y-m-d', $time1).' '.date('H:i', $time2) );
         return date('Y-m-d H:i',$resDate);
     }
+	
+	//delete an event or reccuring events
 	
 	public function postDeleteEvent($params){
 		$id = $params[0];
@@ -223,14 +247,14 @@ class Events
                 if (strtotime($start)>=strtotime($start_time))
                 {
                     $sqlQuery = "DELETE FROM `booker_events` WHERE `id` = '$id'";
-					$result = $this->conn->query($sqlQuery);
+					$result = $this->sql->conn->query($sqlQuery);
 					
                 }
             }
         }else
         {
             $sqlQuery = "DELETE FROM `booker_events` WHERE `id` = '$id'";
-			$result = $this->conn->query($sqlQuery);
+			$result = $this->sql->conn->query($sqlQuery);
 			return $result;
         }
        

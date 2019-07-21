@@ -1,16 +1,17 @@
 <?php
 include_once "../../libs/RestServer.php";
-include_once "../../config.php";
+include_once "../../libs/SQL.php";
 
 class Users
 {
 	
 	function __construct()
     {
-        
-		$this->conn = new PDO("mysql:host=".HOST.";dbname=".DB_NAME.";charset=utf8", USER, PASSWORD);
-           
+		$this->sql = new SQL();
     }
+	
+	// create new user
+	
 	public function postUser()
     {	
 		
@@ -23,16 +24,18 @@ class Users
 		if ($this->isUserExist($email)) {
 			$sqlQuery = "INSERT INTO `booker_users` (`username`, `password`, `email`, `is_admin`, `is_active`)
 			VALUES ('$username', '$password', '$email', '$is_admin', '$is_active')";
-			$result = $this->conn->query($sqlQuery) ;  
+			$result = $this->sql->conn->query($sqlQuery);  
 			return ['name' => $username];
 		} 
 		return false;
     }
 	
+	// get users list
+	
 	public function getUserList()
     {	
 		$sqlQuery = "SELECT `id`, `username`, `email` FROM `booker_users` WHERE `is_admin` = 0 AND `is_active` = 1";
-		$result = $this->conn->query($sqlQuery) ;  
+		$result = $this->sql->conn->query($sqlQuery);  
 		$resultArray = array ();
 			while ($row = $result->fetchAll(PDO::FETCH_OBJ) ) {
 				$resultArray[] = $row;
@@ -42,6 +45,8 @@ class Users
 				return $resultArr;
 			}
     }
+	
+	// delete user from the users list
 	
 	public function putUserRemove($request)
     {	
@@ -49,16 +54,18 @@ class Users
 		$data = (array) json_decode($request);
 		$id = $data['id'];
 		$sqlQuery = "UPDATE `booker_users` SET `is_active` = 0 WHERE id = '$id'";
-		$result = $this->conn->query($sqlQuery) ;  
+		$result = $this->sql->conn->query($sqlQuery);  
 		
 		return $result;
     }
+	
+	// get user by id
 	
 	public function getUserById($params)
     {	
 		$id = $params[0];
 		$sqlQuery = "SELECT `id`, `username`, `email`, `password` FROM `booker_users` WHERE `id` = '$id'";
-		$result = $this->conn->query($sqlQuery) ;  
+		$result = $this->sql->conn->query($sqlQuery);  
 		$resultArray = array ();
 			while ($row = $result->fetchAll(PDO::FETCH_OBJ) ) {
 				$resultArray[] = $row;
@@ -68,6 +75,8 @@ class Users
 				return $resultArr;
 			}
     }
+	
+	// edit user
 	
 	public function putUserEdit($request)
     {	
@@ -79,18 +88,15 @@ class Users
 		$email = $data['email'];
 		$sqlQuery = "UPDATE `booker_users` SET `username` = '$username', `password` = '$password',
 		`email` = '$email' WHERE id = '$id'";
-		$result = $this->conn->query($sqlQuery) ;  
+		$result = $this->sql->conn->query($sqlQuery);  
 		
 		return $result;
     }
 	
+	// auth user
+	
 	public function postUsersLogin()
 	{	
-	
-		/* $request = file_get_contents('php://input');
-		$data = (array) json_decode($request);
-		$username = $data['username'];
-		$password = $data['password']; */
 		
 		$username = $_POST['username'];
 		$email = $_POST['email'];
@@ -98,7 +104,7 @@ class Users
 		
 		$sqlQuery = "SELECT `id`,`username`, `password`, `email` FROM `booker_users` WHERE `email` = '$email' 
 		AND `is_active` = 1";
-        $result = $this->conn->query($sqlQuery);
+        $result = $this->sql->conn->query($sqlQuery);
 		$resultArray = array ();
 			while ($row = $result->fetchAll(PDO::FETCH_ASSOC) ) {
 				$resultArray[] = $row;
@@ -109,17 +115,19 @@ class Users
 			$token = md5($resultArray[0][0]['email']);
 			$id = $resultArray[0][0]['id'];
 			$sqlQuery = "UPDATE `booker_users` SET token = '$token' WHERE id = '$id'";
-			$result = $this->conn->query($sqlQuery);
+			$result = $this->sql->conn->query($sqlQuery);
 			return ['token' => $token, 'username' => $username, 'id' => $id, 'email' => $email];
 		} else {
 			return false;
 		}
 	}
 	
+	//checking user in database
+	
 	private function isUserExist($email)
     {
         $sqlQuery = "SELECT `email` FROM `booker_users` WHERE `email` = '$email'";
-        $result = $this->conn->query($sqlQuery);
+        $result = $this->sql->conn->query($sqlQuery);
 		$resultArray = array ();
 			while ($row = $result->fetchAll(PDO::FETCH_ASSOC) ) {
 				$resultArray[] = $row;
